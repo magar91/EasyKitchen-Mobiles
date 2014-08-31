@@ -1,0 +1,13 @@
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `v_viewtag` AS
+    select 
+        `r`.`idRecipe` AS `idRecipe`,
+        `r`.`Image` AS `Image`,
+        `t`.`Name` AS `tag`
+    from
+        ((`tag` `t`
+        join `recipextag` `rt` ON ((`t`.`idTag` = `rt`.`idTag`)))
+        join `recipe` `r` ON ((`r`.`idRecipe` = `rt`.`idRecipe`)))

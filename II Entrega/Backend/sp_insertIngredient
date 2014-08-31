@@ -1,0 +1,32 @@
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insertIngredient`(
+				IN ingName VARCHAR(40),
+				IN image LONGBLOB,
+				IN quantity INT,
+				IN measure VARCHAR(40),
+				IN title VARCHAR(60),
+				IN user VARCHAR(50))
+BEGIN
+	DECLARE recipeId INT;
+	DECLARE userId INT;
+	DECLARE ingId INT;
+
+	SET userId = (SELECT idUser FROM User WHERE UserCode = user);
+	SET recipeId = (SELECT idRecipe FROM Recipe r INNER JOIN UserXRecipe ur ON
+					r.idRecipe = ur.idRecipe INNER JOIN User u ON
+					u.idUser = ur.idUser WHERE r.Title = title AND u.idUser = userId);
+
+	INSERT INTO Ingredient(Name,Image,Quantity,MeasureUnit)
+	VALUES (ingName,image,quantity,measure);
+	
+	SET ingId = (SELECT last_insert_id() FROM Ingredient LIMIT 1);
+
+	INSERT INTO IngredientXRecipe VALUES (ingId,recipeId);
+	
+
+END

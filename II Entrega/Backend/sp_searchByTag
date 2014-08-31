@@ -1,0 +1,13 @@
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_searchByTag`(
+				IN searchTag VARCHAR(60))
+BEGIN
+	
+	SELECT * FROM v_viewtags WHERE tag = searchTag; 
+
+END

@@ -1,0 +1,26 @@
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addStepToRecipe`(
+				IN stepDesc VARCHAR(300),
+				IN image LONGBLOB,
+				IN title VARCHAR(60),
+				IN user VARCHAR(50))
+BEGIN
+	DECLARE userId INT;
+	DECLARE recipeId INT;
+
+	SET userId = (SELECT idUser FROM User WHERE userCode = user);
+	SET recipeId = (SELECT idRecipe FROM Recipe r INNER JOIN UserXRecipe ur ON
+					r.idRecipe = ur.idRecipe INNER JOIN User u ON
+					u.idUser = ur.idUser WHERE r.title = title AND u.idUser = userId);
+
+	INSERT INTO RecipeStep (idRecipe,StepDescription,Image)
+	VALUES (recipeId,stepDesc,image);
+
+	
+
+END
