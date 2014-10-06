@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+ 
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <acces origin ="https://www.easykitchenapp.com" subdomains="true"/>
+
+    <title>EasyKitchen App</title>
+    <!--<script type="text/javascript" src="js/index.js"></script> -->
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/thumbnail-gallery.css" rel="stylesheet">
+    
+    <script src="js/jquery-1.11.0.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/openfb.js"></script>
+
+    
+    <!-- Java scripts de las dependencias -->
+    <link href="css/jquery-ui.css" rel="stylesheet">
+    <link href="css/jquery-ui.structure.css" rel="stylesheet">
+    <link href="css/jquery-ui.theme.css" rel="stylesheet">
+    <script src="external/jquery/jquery.js"></script>
+     <script type ="text/javascript" src ="js/jquery-1.11.0.js"></script>
+    <script type ="text/javascript" src="cordova.js"></script>
+    <script type ="text/javascript" src="cordova_plugins.js"></script>
+    <script type ="text/javascript" src="js/jquery-ui.js"></script>
+    <script type ="text/javascript" src="js/LogInFacebook.js"></script>
+    <script type ="text/javascript" src="oauth.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script type ="text/javascript">
+    
+       OAuth.initialize('-JA314FvSAJsq4nbhQKK-pSk_Wo');
+        
+        function authenticate(callback) {
+    OAuth.popup('facebook')
+        .done(function(result) {
+            result.get('/me')
+            .done(function (response) {
+                //this will display "John Doe" in the console
+                console.log(response.name);
+                loginDatabase(response.name);
+               
+            })
+            .fail(function (err){
+                console.log(err);
+                alert("error conectando");//handle error with err
+            });
+        })
+        .fail(function(error) {
+            console.log(error);
+            callback(error);
+        });
+}
+    
+    </script>
+
+</head>
+
+<body onload="nobackbutton();">
+    
+    <div class="row">
+        <center>
+            <img class="img-responsive" src="img/logo.png" alt="">
+        </center>
+    </div>
+    <p>&nbsp;</p>
+    <div class="row">
+        <center>
+            <button onclick="authenticate()" style="background-image:url(img/fb_icon.png); width:230px; height:48px" type="button" class="btn btn-default"></button>
+        </center>
+    </div>
+</body>
+</html>
