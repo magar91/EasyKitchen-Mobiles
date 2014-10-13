@@ -1,0 +1,218 @@
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+-- Schema EasyKitchen
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `EasyKitchen` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `EasyKitchen` ;
+
+-- -----------------------------------------------------
+-- Table `EasyKitchen`.`Recipe`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EasyKitchen`.`Recipe` (
+  `idRecipe` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Tittle` VARCHAR(60) NOT NULL,
+  `RecipeOwner` VARCHAR(80) NOT NULL,
+  `RecipeCode` VARCHAR(50) NOT NULL,
+  `VideoURL` VARCHAR(100) NULL,
+  `Description` VARCHAR(400) NULL,
+  `PositiveRating` INT ZEROFILL NOT NULL,
+  `NegativeRating` INT ZEROFILL NOT NULL,
+  `TimeLength` INT NOT NULL,
+  `Image` LONGBLOB NULL,
+  PRIMARY KEY (`idRecipe`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `EasyKitchen`.`Ingredient`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EasyKitchen`.`Ingredient` (
+  `idIngredient` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Name` VARCHAR(40) NOT NULL,
+  `Image` LONGBLOB NULL,
+  `Quantity` INT NOT NULL,
+  `MeasureUnit` VARCHAR(40) NOT NULL,
+  PRIMARY KEY (`idIngredient`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `EasyKitchen`.`User`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EasyKitchen`.`User` (
+  `idUser` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `UserCode` VARCHAR(50) NOT NULL,
+  `Name` VARCHAR(40) NOT NULL,
+  `LastName` VARCHAR(40) NOT NULL,
+  `Description` VARCHAR(300) NULL,
+  `Image` LONGBLOB NULL,
+  PRIMARY KEY (`idUser`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `EasyKitchen`.`ContactInfoType`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EasyKitchen`.`ContactInfoType` (
+  `idContactInfoType` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Name` VARCHAR(60) NOT NULL,
+  PRIMARY KEY (`idContactInfoType`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `EasyKitchen`.`ContactInfo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EasyKitchen`.`ContactInfo` (
+  `idContactInfo` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `idContactInfoType` INT UNSIGNED NOT NULL,
+  `Information` VARCHAR(50) NULL,
+  PRIMARY KEY (`idContactInfo`),
+  INDEX `fk_ContactInfo_ContactInfoType1_idx` (`idContactInfoType` ASC),
+  CONSTRAINT `fk_ContactInfo_ContactInfoType1`
+    FOREIGN KEY (`idContactInfoType`)
+    REFERENCES `EasyKitchen`.`ContactInfoType` (`idContactInfoType`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `EasyKitchen`.`RecipeStep`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EasyKitchen`.`RecipeStep` (
+  `idRecipeStep` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `idRecipe` INT UNSIGNED NOT NULL,
+  `StepDescription` VARCHAR(300) NOT NULL,
+  `Image` LONGBLOB NULL,
+  PRIMARY KEY (`idRecipeStep`),
+  INDEX `fk_RecipeStep_Recipe1_idx` (`idRecipe` ASC),
+  CONSTRAINT `fk_RecipeStep_Recipe1`
+    FOREIGN KEY (`idRecipe`)
+    REFERENCES `EasyKitchen`.`Recipe` (`idRecipe`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `EasyKitchen`.`Tag`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EasyKitchen`.`Tag` (
+  `idTag` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Name` VARCHAR(60) NOT NULL,
+  PRIMARY KEY (`idTag`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `EasyKitchen`.`UserxUser`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EasyKitchen`.`UserxUser` (
+  `idUser` INT UNSIGNED NOT NULL,
+  `idFollowedUser` INT UNSIGNED NOT NULL,
+  INDEX `fk_UserxUser_User_idx` (`idUser` ASC),
+  INDEX `fk_UserxUser_User1_idx` (`idFollowedUser` ASC),
+  CONSTRAINT `fk_UserxUser_User`
+    FOREIGN KEY (`idUser`)
+    REFERENCES `EasyKitchen`.`User` (`idUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_UserxUser_User1`
+    FOREIGN KEY (`idFollowedUser`)
+    REFERENCES `EasyKitchen`.`User` (`idUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `EasyKitchen`.`UserxRecipe`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EasyKitchen`.`UserxRecipe` (
+  `idUser` INT UNSIGNED NOT NULL,
+  `idRecipe` INT UNSIGNED NOT NULL,
+  INDEX `fk_UserxRecipe_User1_idx` (`idUser` ASC),
+  INDEX `fk_UserxRecipe_Recipe1_idx` (`idRecipe` ASC),
+  CONSTRAINT `fk_UserxRecipe_User1`
+    FOREIGN KEY (`idUser`)
+    REFERENCES `EasyKitchen`.`User` (`idUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_UserxRecipe_Recipe1`
+    FOREIGN KEY (`idRecipe`)
+    REFERENCES `EasyKitchen`.`Recipe` (`idRecipe`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `EasyKitchen`.`IngredientxRecipe`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EasyKitchen`.`IngredientxRecipe` (
+  `idIngredient` INT UNSIGNED NOT NULL,
+  `idRecipe` INT UNSIGNED NOT NULL,
+  INDEX `fk_IngredientxRecipe_Ingredient1_idx` (`idIngredient` ASC),
+  INDEX `fk_IngredientxRecipe_Recipe1_idx` (`idRecipe` ASC),
+  CONSTRAINT `fk_IngredientxRecipe_Ingredient1`
+    FOREIGN KEY (`idIngredient`)
+    REFERENCES `EasyKitchen`.`Ingredient` (`idIngredient`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_IngredientxRecipe_Recipe1`
+    FOREIGN KEY (`idRecipe`)
+    REFERENCES `EasyKitchen`.`Recipe` (`idRecipe`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `EasyKitchen`.`ContactInfoxUser`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EasyKitchen`.`ContactInfoxUser` (
+  `idContactInfo` INT UNSIGNED NOT NULL,
+  `idUser` INT UNSIGNED NOT NULL,
+  INDEX `fk_ContactInfoxUser_ContactInfo1_idx` (`idContactInfo` ASC),
+  INDEX `fk_ContactInfoxUser_User1_idx` (`idUser` ASC),
+  CONSTRAINT `fk_ContactInfoxUser_ContactInfo1`
+    FOREIGN KEY (`idContactInfo`)
+    REFERENCES `EasyKitchen`.`ContactInfo` (`idContactInfo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ContactInfoxUser_User1`
+    FOREIGN KEY (`idUser`)
+    REFERENCES `EasyKitchen`.`User` (`idUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `EasyKitchen`.`RecipexTag`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EasyKitchen`.`RecipexTag` (
+  `idRecipe` INT UNSIGNED NOT NULL,
+  `idTag` INT UNSIGNED NOT NULL,
+  INDEX `fk_RecipexTag_Recipe1_idx` (`idRecipe` ASC),
+  INDEX `fk_RecipexTag_Tag1_idx` (`idTag` ASC),
+  CONSTRAINT `fk_RecipexTag_Recipe1`
+    FOREIGN KEY (`idRecipe`)
+    REFERENCES `EasyKitchen`.`Recipe` (`idRecipe`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_RecipexTag_Tag1`
+    FOREIGN KEY (`idTag`)
+    REFERENCES `EasyKitchen`.`Tag` (`idTag`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
